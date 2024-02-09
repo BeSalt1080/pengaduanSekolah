@@ -51,9 +51,10 @@ const openDelete = (index) => {
 </script>
 <template>
   <AuthenticatedLayout>
-    <Head title="Woi" />
-    <div class="w-1/3">
-      <div class="flex justify-between">
+    <Head title="Kategori" />
+    <div class="w-1/3 bg-white p-5 rounded-xl">
+      <div class="flex justify-between ">
+
         <h2
           class="font-semibold text-xl text-gray-800 leading-tight self-center"
         >
@@ -90,12 +91,12 @@ const openDelete = (index) => {
           </dialog>
         </div>
       </div>
-      <table class="table w-full table-fixed">
+      <table class="table w-full">
         <!-- head -->
         <thead>
           <tr>
             <th>No</th>
-            <th>Nama Kategori</th>
+            <th class="w-1/2">Nama Kategori</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -110,7 +111,7 @@ const openDelete = (index) => {
             <th>{{ index + 1 }}</th>
             <td>{{ kategori.name }}</td>
             <td>
-              <button class="btn btn-warning" @click="openEdit(index)">
+              <button class="btn btn-warning me-2" @click="openEdit(index)">
                 Edit
               </button>
               <dialog

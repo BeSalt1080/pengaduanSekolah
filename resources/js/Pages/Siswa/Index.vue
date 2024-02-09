@@ -38,7 +38,7 @@ const remove = (id) => {
 
 const submit = () => {
   create.post(route("siswa.store"), {
-    onFinish: () => create.reset('kelas','nis'),
+    onFinish: () => create.reset("kelas", "nis"),
   });
 };
 
@@ -54,8 +54,8 @@ const openDelete = (index) => {
 </script>
 <template>
   <AuthenticatedLayout>
-    <Head title="Woi" />
-    <div class="w-1/2">
+    <Head title="Siswa" />
+    <div class="w-1/2 bg-white p-5 rounded-xl">
       <div class="flex justify-between">
         <h2
           class="font-semibold text-xl text-gray-800 leading-tight self-center"
@@ -104,14 +104,14 @@ const openDelete = (index) => {
           </dialog>
         </div>
       </div>
-      <table class="table w-full table-fixed">
+      <table class="table w-full">
         <!-- head -->
         <thead>
           <tr>
-            <th>No</th>
-            <th>Nis</th>
-            <th>Kelas</th>
-            <th>Action</th>
+            <th class="w-1/12">No</th>
+            <th class="w-4/12">Nis</th>
+            <th class="w-4/12">Kelas</th>
+            <th class="w-3/12">Action</th>
           </tr>
         </thead>
         <tbody>
@@ -126,7 +126,7 @@ const openDelete = (index) => {
             <td>{{ siswa.nis }}</td>
             <td>{{ siswa.kelas }}</td>
             <td>
-              <button class="btn btn-warning" @click="openEdit(index)">
+              <button class="btn btn-warning me-2" @click="openEdit(index)">
                 Edit
               </button>
               <dialog

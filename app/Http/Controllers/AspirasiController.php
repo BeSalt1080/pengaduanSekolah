@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Aspirasi;
 use App\Models\Siswa;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class AspirasiController extends Controller
 {
@@ -14,7 +16,7 @@ class AspirasiController extends Controller
      */
     public function index()
     {
-        return Inertia::render("Aspirasi/Index", ["aspirasis"=> Aspirasi::with('kategori')->get()]);
+        return Inertia::render("Aspirasi/Index", ["aspirasis" => Aspirasi::with('kategori', 'tanggapan')->get()]);
     }
 
     /**
@@ -52,9 +54,9 @@ class AspirasiController extends Controller
                 'keterangan' => $request->keterangan,
                 'foto' => $name
             ]);
-            return redirect()->back()->with('Data berhasil ditambahkan');
+            return Redirect::back()->with('success', 'Berhasil membuat pengaduan');
         }
-        return redirect()->back()->with('NIS belum terdaftar');
+        return Redirect::back()->withErrors(['nis' => 'NIS belum terdaftar']);
     }
 
     /**
@@ -62,20 +64,18 @@ class AspirasiController extends Controller
      */
     public function show(string $id)
     {
-        return Inertia::render('Aspirasi/Detail', ["aspirasi"=>Aspirasi::find($id)]);
+        return Inertia::render('Aspirasi/Detail', ["aspirasi" => Aspirasi::find($id)]);
     }
 
-    public function profil()
+    public function search()
     {
-        $aspirasis = Aspirasi::latest()->get();
-        if(app('request')->input('q') != "")
-        {
+        $aspirasis = Aspirasi::with('kategori')->paginate(5)->withQueryString();
+        if (app('request')->input('q') != "") {
             $aspirasis = Aspirasi::where('nis', 'like', '%' . app('request')->input('q') . '%')
-            ->orWhere('lokasi', 'like', '%' . app('request')->input('q') . '%')
-            ->orWhere('keterangan', 'like', '%' . app('request')->input('q') . '%')->get();
-
+                ->orWhere('lokasi', 'like', '%' . app('request')->input('q') . '%')
+                ->orWhere('keterangan', 'like', '%' . app('request')->input('q') . '%')->with('kategori')->paginate(5)->withQueryString();
         }
-        return Inertia::render('Apsirasi/Profil', [compact('aspirasis')]);
+        return Inertia::render("Aspirasi/Search", ["aspirasis" => $aspirasis, "query" => app('request')->input('q')]);
     }
     /**
      * Show the form for editing the specified resource.
@@ -99,5 +99,11 @@ class AspirasiController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+    public function laporan()
+    {
+        $aspirasis = Aspirasi::with('kategori')->latest()->get();
+        $pdf = Pdf::loadView('pdf.laporan', compact('aspirasis'));
+        return $pdf->download('laporan.pdf');
     }
 }

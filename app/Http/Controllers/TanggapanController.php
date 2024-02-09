@@ -10,6 +10,7 @@ use Inertia\Response;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 
+
 class TanggapanController extends Controller
 {
     /**
@@ -38,7 +39,6 @@ class TanggapanController extends Controller
             'status'=>'required',
             'feedback'=>'required'
         ]);
-
         Tanggapan::create([
             'aspirasi_id'=>$request->aspirasi_id,
             'feedback'=>$request->feedback,
