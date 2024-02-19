@@ -39,7 +39,7 @@ Route::middleware('auth')->group(function () {
     Route::get('download', [AspirasiController::class, 'laporan'])->name('download');
 });
 
-Route::resource('aspirasi', AspirasiController::class)->only(['store', 'show']);
+Route::resource('aspirasi', AspirasiController::class)->only(['store', 'show','destroy']);
 Route::get('/search', [AspirasiController::class, 'search'])->name('search');
 
 require __DIR__ . '/auth.php';

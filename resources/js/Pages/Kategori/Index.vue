@@ -36,7 +36,7 @@ const remove = (id) => {
 
 const submit = () => {
   create.post(route("kategori.store"), {
-    onFinish: () => create.reset(),
+    onFinish: () => create.reset('name'),
   });
 };
 

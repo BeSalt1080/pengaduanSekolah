@@ -98,7 +98,8 @@ class AspirasiController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        Aspirasi::destroy($id);
+        return Redirect::route('aspirasi.index')->with('success','Aspirasi berhasil ditambahkan');
     }
     public function laporan()
     {

@@ -1,10 +1,25 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Head, Link, router } from "@inertiajs/vue3";
+import { Head, Link, router, useForm } from "@inertiajs/vue3";
 import { ref } from "vue";
 
 const deletes = ref([]);
+const tanggapanDeletes = ref([]);
+const tanggapanEdits = ref([]);
 const details = ref([]);
+const edits = ref([]);
+
+const create = useForm({
+  aspirasi_id: 0,
+  feedback: null,
+});
+
+const edit = useForm({
+    _method: 'PUT',
+  aspirasi_id: 0,
+  feedback: null,
+});
+
 const props = defineProps({
   aspirasis: {
     type: Object,
@@ -19,11 +34,44 @@ const remove = (id) => {
   });
 };
 
+const removeTanggapan = (id) => {
+  router.visit(route("tanggapan.destroy", id), {
+    onFinish: () => "",
+    method: "delete",
+  });
+};
+
+const editTanggapan = (id) => {
+  edit.post(route("tanggapan.update", id), {
+    onFinish: () => "",
+    method: "put",
+  });
+};
+
+const store = (id) => {
+  create.aspirasi_id = id;
+  create.post(route("tanggapan.store"), {
+    onFinish: () => create.reset("status", "feedback"),
+  });
+};
+
 const openDelete = (index) => {
   deletes.value[index].showModal();
 };
+
 const openDetail = (index) => {
   details.value[index].showModal();
+};
+
+const openEdit = (index, status, feedback, aspirasi_id) => {
+  edit.status = status;
+  edit.feedback = feedback;
+  edit.aspirasi_id = aspirasi_id
+  edits.value[index].showModal();
+};
+
+const openDeleteTanggapan = (index) => {
+  tanggapanDeletes.value[index].showModal();
 };
 </script>
 <template>
@@ -82,7 +130,9 @@ const openDetail = (index) => {
                 <div class="modal-box p-10" style="max-width: 64em !important">
                   <div class="flex justify-between gap-5 w-full">
                     <div class="w-1/2">
-                      <h1 class="text-2xl font-bold text-center pb-5">Aspirasi</h1>
+                      <h1 class="text-2xl font-bold text-center pb-5">
+                        Aspirasi
+                      </h1>
                       <img
                         class="w-full"
                         :src="'/image/' + aspirasi.foto"
@@ -145,28 +195,144 @@ const openDetail = (index) => {
                         </tr>
                       </table>
                     </div>
-                    <div class="divider-horizontal divider-primary divider"></div>
-                    <div class="w-1/2">
+                    <div
+                      class="divider-horizontal divider-primary divider"
+                    ></div>
+                    <div class="w-1/2 h-full">
                       <h1 class="text-2xl font-bold text-center">Tanggapan</h1>
-                      <div class="flex justify-center h-full">
-                        <div v-if="aspirasi.tanggapan" class="p-3">
-                            <h1 class="text-xl">Feedback :</h1>
-                          <div class="border p-5 rounded-lg shadow-md bg-base-200">
-                            <span class="text-lg">{{
-                              aspirasi.tanggapan.feedback
-                            }}</span>
-                          </div>
-                          <div>
-                            Waktu Pembuatan :
-                            {{ Date(aspirasi.tanggapan.created_at) }}
-                          </div>
-                        </div>
-                        <Link
-                          :href="route('tanggapan.show', aspirasi.id)"
-                          class="btn btn-primary mt-24"
-                          v-else
-                          >Tambah Tanggapan</Link
+                      <div class="flex justify-center">
+                        <div
+                          v-if="aspirasi.tanggapan !== null"
+                          class="p-3 w-full"
                         >
+                          <h1 class="text-xl">Feedback :</h1>
+                          <template
+                            v-for="(tanggapan, index) in aspirasi.tanggapan"
+                            :key="index"
+                          >
+                            <div
+                              class="border p-5 rounded-lg shadow-md bg-base-200 flex w-full"
+                            >
+                              <div
+                                class="text-lg flex justify-between w-full content-center"
+                              >
+                                <div class="">{{ tanggapan.feedback }}</div>
+                                <div>
+                                  <button
+                                    class="btn btn-warning text-xl"
+                                    @click="openEdit(index, tanggapan.status, tanggapan.feedback, tanggapan.aspirasi_id)"
+                                  >
+                                    
+                                  </button>
+                                  <dialog
+                                    :ref="
+                                      (el) => {
+                                        edits.push(el);
+                                      }
+                                    "
+                                    class="modal"
+                                  >
+                                    <div class="modal-box">
+                                      <form
+                                        @submit.prevent="editTanggapan(tanggapan.id)"
+                                        class="flex flex-col"
+                                      >
+                                        <h3 class="font-bold text-lg">
+                                          Edit Tanggapan
+                                        </h3>
+                                        <label class="form-control">
+                                          <div class="label">
+                                            <span class="label-text"
+                                              >Feedback</span
+                                            >
+                                          </div>
+                                          <textarea
+                                            class="textarea textarea-bordered h-24"
+                                            placeholder="Feedback laporan"
+                                            v-model="edit.feedback"
+                                          ></textarea>
+                                        </label>
+                                        <div class="modal-action">
+                                          <button class="btn btn-primary">
+                                            Submit
+                                          </button>
+                                          <form method="dialog">
+                                            <!-- if there is a button in form, it will close the modal -->
+                                            <button class="btn">Close</button>
+                                          </form>
+                                        </div>
+                                      </form>
+                                    </div>
+                                  </dialog>
+                                  <button
+                                    class="btn btn-error text-xl"
+                                    @click="openDeleteTanggapan(index)"
+                                  >
+                                    
+                                  </button>
+                                  <dialog
+                                    :ref="
+                                      (el) => {
+                                        tanggapanDeletes.push(el);
+                                      }
+                                    "
+                                    class="modal"
+                                  >
+                                    <div class="modal-box">
+                                      <h3 class="font-bold text-lg">
+                                        Delete Tanggapan
+                                      </h3>
+                                      <label class="form-control w-full">
+                                        <div class="label">
+                                          <span class="label-text"
+                                            >Apakah anda yakin?</span
+                                          >
+                                        </div>
+                                      </label>
+                                      <div class="modal-action">
+                                        <button
+                                          class="btn btn-error"
+                                          @click="removeTanggapan(tanggapan.id)"
+                                        >
+                                          Hapus
+                                        </button>
+                                        <form method="dialog">
+                                          <!-- if there is a button in form, it will close the modal -->
+                                          <button class="btn">Close</button>
+                                        </form>
+                                      </div>
+                                    </div>
+                                  </dialog>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                                <div>
+                                    Status: <template v-if="index == 0">Proses</template> <template v-else>Selesai</template>
+                                </div>
+                                <div>
+                                    Waktu Pembuatan :
+                                    {{ new Date(Date.parse(tanggapan.created_at)) }}
+                                </div>
+                            </div>
+                          </template>
+                        </div>
+                        <div v-else class="p-3">Belum ada tanggapan</div>
+                      </div>
+                      <div class="" v-if="aspirasi.tanggapan.length < 2">
+                        <form
+                          @submit.prevent="store(aspirasi.id)"
+                          class="w-full flex"
+                        >
+                          <label class="form-control">
+                            <input
+                              class="input input-bordered"
+                              placeholder="Feedback laporan"
+                              v-model="create.feedback"
+                            />
+                          </label>
+                          <button class="btn"></button>
+                        </form>
                       </div>
                     </div>
                   </div>

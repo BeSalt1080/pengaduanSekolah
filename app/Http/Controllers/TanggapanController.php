@@ -32,27 +32,24 @@ class TanggapanController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request) : RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'aspirasi_id'=>'required',
-            'status'=>'required',
-            'feedback'=>'required'
+            'aspirasi_id' => 'required',
+            'feedback' => 'required'
         ]);
+
         Tanggapan::create([
             'aspirasi_id'=>$request->aspirasi_id,
             'feedback'=>$request->feedback,
         ]);
-        Aspirasi::find($request->aspirasi_id)->update([
-            'status'=>$request->status,
-        ]);
-        return Redirect::route('aspirasi.index')->with('success','Aspirasi berhasil ditambahkan');
+        return Redirect::route('aspirasi.index')->with('success', 'Aspirasi berhasil ditambahkan');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id) : Response
+    public function show(string $id): Response
     {
         $aspirasi = Aspirasi::findOrFail($id);
         return Inertia::render("Tanggapan/Create", compact("aspirasi"));
@@ -71,7 +68,15 @@ class TanggapanController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'aspirasi_id' => 'required',
+            'feedback' => 'required',
+        ]);
+        Tanggapan::findOrFail($id)->update([
+            'aspirasi_id' => $request->aspirasi_id,
+            'feedback' => $request->feedback,
+        ]);
+        return Redirect::route('aspirasi.index')->with('success', 'Aspirasi berhasil ditambahkan');
     }
 
     /**
@@ -79,6 +84,7 @@ class TanggapanController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        Tanggapan::destroy($id);
+        return Redirect::route('aspirasi.index')->with('success', 'Aspirasi berhasil ditambahkan');
     }
 }

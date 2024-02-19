@@ -38,8 +38,22 @@ const remove = (id) => {
 
 const submit = () => {
   create.post(route("siswa.store"), {
-    onFinish: () => create.reset("kelas", "nis"),
-  });
+    onError: (errors) => {
+      error.value = errors;
+      errorMessage.value = "Gagal membuat pengaduan";
+      errorMessage.value = errors.warning;
+      setTimeout(() => {
+        errorMessage.value = null;
+      }, 3000);
+    },
+    onSuccess: () => {
+      form.reset();
+      success.value = "Berhasil membuat pengaduan";
+      setTimeout(() => {
+        success.value = null;
+      }, 3000);
+    },
+  })
 };
 
 const openEdit = (index) => {

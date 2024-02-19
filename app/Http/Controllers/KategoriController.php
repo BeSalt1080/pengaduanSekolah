@@ -24,15 +24,15 @@ class KategoriController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            "name" => "required",
+            "name" => "required|unique:kategoris,name",
         ]);
         Kategori::create([
             "name" => $request->name,
         ]);
-        return Redirect::route("kategori.index")->with("success","Kategori berhasil dibuat");
+        return Redirect::route("kategori.index")->with("success", "Kategori berhasil dibuat");
     }
 
-    /**
+    /**2
      * Display the specified resource.
      */
     public function show(string $id)
@@ -57,9 +57,11 @@ class KategoriController extends Controller
         $request->validate([
             "name" => "required",
         ]);
+
         Kategori::findOrFail($id)->update([
             "name" => $request->name
         ]);
+
         return Redirect::route('kategori.index')->with("success", "Kategori berhasil diubah");
     }
 
@@ -70,6 +72,6 @@ class KategoriController extends Controller
     {
         $kategori = Kategori::findOrFail($id);
         $kategori->delete();
-        return Redirect::route("kategori.index")->with("success","Kategori berhasil dihapus");
+        return Redirect::route("kategori.index")->with("success", "Kategori berhasil dihapus");
     }
 }

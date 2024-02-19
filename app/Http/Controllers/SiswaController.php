@@ -24,14 +24,14 @@ class SiswaController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nis' => 'required',
+            'nis' => 'required|unique:siswas,nis',
             'kelas' => 'required'
         ]);
         Siswa::create([
             'nis' => $request->get('nis'),
             'kelas' => $request->get('kelas'),
         ]);
-        return Redirect::route('siswa.index')->with('success','Siswa berhasil dibuat');
+        return Redirect::route('siswa.index')->with('success', 'Siswa berhasil dibuat');
     }
 
     /**
@@ -60,12 +60,15 @@ class SiswaController extends Controller
             'nis' => 'required',
             'kelas' => 'required'
         ]);
-
-        $siswa = Siswa::find($id)->update([
-            'nis' => $request->nis,
-            'kelas' => $request->kelas
-        ]);
-        return Redirect::route('siswa.index')->with('success','Siswa berhasil diubah');
+        try {
+            Siswa::find($id)->update([
+                'nis' => $request->nis,
+                'kelas' => $request->kelas
+            ]);
+        } catch (\Illuminate\Database\QueryException $exception) {
+            // throw $exception;
+        }
+        return Redirect::route('siswa.index')->with('success', 'Siswa berhasil diubah');
     }
 
     /**
@@ -74,6 +77,6 @@ class SiswaController extends Controller
     public function destroy(string $id)
     {
         Siswa::destroy($id);
-        return Redirect::route('siswa.index')->with('success','Siswa Berhasil dihapus');
+        return Redirect::route('siswa.index')->with('success', 'Siswa Berhasil dihapus');
     }
 }

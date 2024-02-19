@@ -10,7 +10,7 @@ class Aspirasi extends Model
     use HasFactory;
     protected $fillable = ['nis','kategori_id','lokasi','keterangan','foto'];
     public function tanggapan(){
-        return $this->hasOne(Tanggapan::class);
+        return $this->hasMany(Tanggapan::class);
     }
     public function kategori(){
         return $this->belongsTo(Kategori::class);

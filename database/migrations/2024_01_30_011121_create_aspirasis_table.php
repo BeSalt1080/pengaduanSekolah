@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('keterangan');
             $table->enum('status', ['Menunggu','Proses','Selesai'])->default('Menunggu');
             $table->timestamps();
-            $table->foreign('nis')->references('nis')->on('siswas');
+            $table->foreign('nis')->references('nis')->on('siswas')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 

@@ -8,5 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Tanggapan extends Model
 {
     use HasFactory;
-    protected $fillable = ["aspirasi_id","feedback"];
+    protected $fillable = ["aspirasi_id","status","feedback"];
+    public function aspirasi(){
+        return $this->belongsTo(Aspirasi::class);
+    }
 }
